@@ -22,12 +22,17 @@
 				weapon.shoot();
 			
 			
-			if(key.isDown(key.LEFT) || key.isDown(key.RIGHT))
+			if(key.isDown(key.LEFT) || key.isDown(key.RIGHT) ||
+			   key.isDown(key.UP)	|| key.isDown(key.DOWN))
 			{
 				if(key.isDown(key.LEFT))
 					_avelx -= vel;
 				if(key.isDown(key.RIGHT))
 					_avelx += vel;
+				if(key.isDown(key.UP))
+					_avely -= vel;
+				if(key.isDown(key.DOWN))
+					_avely += vel;
 			}else{
 				_avelx *= 0.8;
 				_avely *= 0.8;

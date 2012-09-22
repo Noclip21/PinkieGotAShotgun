@@ -5,7 +5,7 @@
 	public class Camera extends BaseMc
 	{
 		var screen  :Screen;
-		var _target :MovieClip;
+		var _target :Object;
 		var _delay	:Number;
 		var W		:Number;
 		var H		:Number;
@@ -17,7 +17,7 @@
 		public function set delay(n) { _delay = n;  }
 		
 		
-		public function Camera(scr :Screen,obj :MovieClip,del :Number = 0.2)
+		public function Camera(scr :Screen,obj :Object,del :Number = 0.2)
 		{
 			screen = scr;
 			_target = obj;

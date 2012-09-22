@@ -8,6 +8,8 @@
 	import flash.events.Event;
 	import flash.media.SoundMixer;
 	import flash.geom.Point;
+	import flash.events.TimerEvent;
+	import flash.geom.ColorTransform;
 	
 	public class Utils extends MovieClip
 	{
@@ -88,13 +90,14 @@
 			for(var i=0;i<array.length;i++)
 				if(array[i] == item)
 					return  i;
-			return null;
+			return -1;
 		}
 		
 			// removes a movieclip fomr an array given the two
 		public static function removeObject(target,array)
 		{
-			array.splice(getID(target,array),1);
+			var id = getID(target,array);
+			if(id >= 0) array.splice(getID(target,array),1);
 		}
 		
 			// deletes a given movieclip if it still exists
@@ -217,9 +220,11 @@
 		}
 		
 			// returns relatice difference between two given numbers and easy
-		public static function difFactor(a,b,easy = 0)
+		public static function difFactor(a,b,easy = 0,min = 0)
 		{
-			return (a - b)*easy;
+			var factor = (a - b)*easy;
+			if(factor < min && min != 0) factor = a - b;
+			return factor;
 		}
 		
 			// animate alpha of a given movieclip with given offset and callback
@@ -261,6 +266,8 @@
 			{
 				if(!obj.hasEventListener('move'))
 				{
+					trace('entrou');
+					if(getClass(obj) == BaseMc) BaseMc(obj).locked = true;
 					obj.pointMove = point;
 					obj.easyMove = easy; 
 					obj.callbackMove = callback;
@@ -274,8 +281,11 @@
 				mc.x += difFactor(mc.pointMove.x,mc.x,mc.easyMove);
 				mc.y += difFactor(mc.pointMove.y,mc.y,mc.easyMove);
 				
-				if(dist(mc,mc.pointMove) <= 1)
+				if(dist(mc,mc.pointMove) <= 2)
 				{
+					trace('saiu');
+					if(getClass(obj) == BaseMc) BaseMc(obj).locked = false;
+					
 					mc.removeEventListener(Event.ENTER_FRAME,move);
 					
 					mc.x = mc.pointMove.x;
@@ -285,6 +295,7 @@
 			}
 		}
 		
+			// animate size of a given movieclip to a given point size with a given easy and callback
 		public static function resize(obj,size = null,easy = 0.1,callback = null)
 		{
 			if(getClass(obj) != Event)
@@ -313,6 +324,54 @@
 					if(mc.resizeCallback) mc.resizeCallback();
 				}
 			}
+		}
+		
+			// animate blink for a given movieclip to a given whrite saturation and may be repeated with given intervals and a callback
+		public static function blink(obj,callback = null,alpha = 1,repeat = 0,intervalms = 500)
+		{
+			if(getClass(obj) != Event && getClass(obj) != TimerEvent)
+			{
+				if(!obj.hasEventListener('blink'))
+				{
+					obj.blinkAlpha = alpha;
+					obj.blinktimer = new Timer(intervalms,repeat);
+					obj.blinkCount = -1;
+					obj.blinkCallback = callback;
+
+					obj.blinktimer.addEventListener(TimerEvent.TIMER,blink);
+					obj.blinktimer.start();
+					
+					obj.addEventListener(Event.ENTER_FRAME,blink);
+				}
+			}else
+				if(getClass(obj) == Event)
+				{
+					
+					var mc = obj.target;
+					var timer = mc.blinktimer;
+					
+					var color :ColorTransform = mc.transform.colorTransform;
+					
+					if(timer.currentCount > mc.blinkCount)
+					{
+						mc.blinkCount = timer.currentCount;
+						color.redMultiplier =	color.greenMultiplier =	color.blueMultiplier =	(1 - mc.blinkAlpha);
+						color.redOffset =		color.greenOffset =		color.blueOffset = 		255*mc.blinkAlpha;
+					}else{
+						color.redMultiplier =	color.greenMultiplier =	color.blueMultiplier +=	difFactor(1,color.blueMultiplier,0.5,0.01);
+						color.redOffset =		color.greenOffset =		color.blueOffset = 		255*(1 - color.blueMultiplier);
+					}
+					
+					mc.transform.colorTransform = color;
+					
+					if(timer.currentCount >= timer.repeatCount && color.blueMultiplier == 1)
+					{
+						mc.removeEventListener(Event.ENTER_FRAME,blink);
+						timer.removeEventListener(TimerEvent.TIMER,blink);
+						
+						if(mc.blinkCallback) mc.blinkCallback();
+					}
+				}
 		}
 		
 			// template

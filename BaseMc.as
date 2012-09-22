@@ -27,6 +27,9 @@
 		
 		// animation vars
 		
+		public var locked :Boolean = false;
+		
+		
 		var minAlpha;
 		var maxAlpha;
 		var offsetAlpha;
@@ -37,6 +40,10 @@
 		var resizeSize;
 		var resizeEasy;
 		var resizeCallback;
+		var blinkAlpha;
+		var blinktimer;
+		var blinkCount;
+		var blinkCallback;
 		
 		
 		
@@ -50,11 +57,14 @@
 		
 		public function BaseMc_display()
 		{
-			_lastx = x;
-			_lasty = y;
-			
-			x += _avelx*Main.TIME;
-			y += _avely*Main.TIME;
+			if(!locked)
+			{
+				_lastx = x;
+				_lasty = y;
+				
+				x += _avelx*Main.TIME;
+				y += _avely*Main.TIME;
+			}
 		}
 		public function display()
 		{

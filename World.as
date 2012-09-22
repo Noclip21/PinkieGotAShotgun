@@ -1,57 +1,53 @@
 ﻿package
 {
 	import flash.display.MovieClip;
+	import flash.geom.Point;
 	
 	public class World extends Screen
 	{
 		
-		var front :MovieClip;
-		var mid   :MovieClip;
-		var back  :MovieClip;
+		public var front :Screen;
+		public var mid   :Screen;
+		public var back  :Screen;
 		
 		
 		public var player :MovieClip;
 		
 		
-		var Qdist 	:Number;
-		var distMin :Number;
-		var distMax :Number;
-		
+		var point :Point;
 		
 		public function World()
 		{
-			front = new MovieClip();
-			mid	  = new MovieClip();
-			back  = new MovieClip();
+			front = new Screen();
+			mid	  = new Screen();
+			back  = new Screen();
 				addChild(back);
 				addChild(mid);
 				addChild(front);
-			
-			Qdist = 0;
-			distMin = 10;
-			distMax = 200;
 			
 			player = new Player();
 				mid.addChild(player);
 				cam = player;
 				
+			point = new Point(0,0);
+			
+			var bg = new Background('map1');
+				back.addChild(bg);
+				player.y = 0;
+				bg.cam = point;
+				
 			var weapon = new Weapon('type3',player.character.limb,this);
 				player.character.limb.addChild(weapon);
 				weapon.x += 100;
 				player.weapon = weapon;
+				
+				createTarget(player.x);
 		}
 		function World_display()
 		{
-			for(var i=0;
-				Qdist - player.x <= _screenW;
-				i += Utils.random(distMin,distMax))
-			{
-				createbBackground(Qdist);
-				createTarget(Qdist);
-				Qdist += i;
-			}
+			point.x += 10;
 		}
-		function createbBackground(posx)
+		/*function createbBackground(posx)
 		{
 			var mc = new MovieClip();
 			with(mc)
@@ -61,7 +57,7 @@
 				graphics.drawRect(posx,-h,10,h);
 			}
 			back.addChild(mc);
-		}
+		}*/
 		function createTarget(posx)
 		{
 			var mc = new Target(5);
