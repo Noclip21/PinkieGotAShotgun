@@ -19,7 +19,6 @@
 		
 		public function Camera(scr :Screen,obj :MovieClip,del :Number = 0.2)
 		{
-			
 			screen = scr;
 			_target = obj;
 			_delay = del;

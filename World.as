@@ -31,9 +31,14 @@
 			distMin = 10;
 			distMax = 200;
 			
-			player = new Vehicle();
+			player = new Player();
 				mid.addChild(player);
 				cam = player;
+				
+			var weapon = new Weapon('type3',player.character.limb,this);
+				player.character.limb.addChild(weapon);
+				weapon.x += 100;
+				player.weapon = weapon;
 		}
 		function World_display()
 		{
@@ -42,6 +47,7 @@
 				i += Utils.random(distMin,distMax))
 			{
 				createbBackground(Qdist);
+				createTarget(Qdist);
 				Qdist += i;
 			}
 		}
@@ -55,6 +61,13 @@
 				graphics.drawRect(posx,-h,10,h);
 			}
 			back.addChild(mc);
+		}
+		function createTarget(posx)
+		{
+			var mc = new Target(5);
+				mc.x = posx;
+				mc.y = Utils.random(-100,50);
+			front.addChild(mc);
 		}
 		override public function display()
 		{

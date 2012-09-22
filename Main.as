@@ -28,8 +28,11 @@
 		public static function set objects(n){ _objects.push(n); }
 		public static function set screens(n){ _screens.push(n); }
 		
+		public static function get stage() { return _stage;				}
 		public static function get width() { return _stage.stageWidth;  }
 		public static function get height(){ return _stage.stageHeight; }
+		public static function get mouseX(){ return _stage.mouseX;      }
+		public static function get mouseY(){ return _stage.mouseY;      }
 		
 		
 		public function Main()
@@ -53,7 +56,7 @@
 			
 			var world = new World();
 				game.addChild(world);
-			
+				
 			// End code
 		}
 		function eventEnterFrame(e :Event)

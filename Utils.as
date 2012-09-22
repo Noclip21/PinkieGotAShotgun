@@ -7,6 +7,7 @@
 	import flash.events.EventDispatcher;
 	import flash.events.Event;
 	import flash.media.SoundMixer;
+	import flash.geom.Point;
 	
 	public class Utils extends MovieClip
 	{
@@ -44,6 +45,37 @@
 			return obj;
 		}
 		
+			// returns an array storing given 2 points representing a line segment
+		public static function lAt(a :Point,b :Point)
+		{
+			return new Array(a,b);
+		}
+		
+			// returns if point is left to line
+		public static function left(p :Point,line :Array)
+		{
+			if(line[0].y == line[1].y)
+				return p.y < line[0].y && p.y < line[1].y;
+				
+			if(line[0].x == line[1].x)
+				return p.x < line[0].x;
+			
+			var a = (line[1].y - line[0].y)/(line[1].x - line[0].x);
+			var b = line[0].y - a*line[0].x;
+			var x = (p.y - b)/a;
+			
+			if(p.x < x)
+				return true;
+			return false;
+		}
+		
+			// returns intersection of two given line segments
+		public static function segIntersec(l1 :Array,l2 :Array)
+		{
+			return	left(l1[0],l2) != left(l1[1],l2) &&
+					left(l2[0],l1) != left(l2[1],l1);
+		}
+		
 		
 		
 		
@@ -70,7 +102,8 @@
 		{
 			if(target)
 			{
-				target.parent.removeChild(target);
+				if(Main.objects)	removeObject(target,Main.objects);
+				if(target.parent)	target.parent.removeChild(target);
 				target.stop();
 				target = null;
 			}
